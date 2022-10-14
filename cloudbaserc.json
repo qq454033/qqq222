@@ -1,0 +1,56 @@
+{
+  "envId": "{{env.ENV_ID}}",
+  "$schema": "https://framework-1258016615.tcloudbaseapp.com/schema/latest.json",
+  "version": "2.0",
+  "functionRoot": "cloudfunctions",
+  "framework": {
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "buildCommand": "npm run build",
+          "outputPath": "build",
+          "cloudPath": "/meeting-simple",
+          "envVariables": {
+            "REACT_APP_ENV_ID": "{{env.ENV_ID}}"
+          }
+        }
+      },
+      "db": {
+        "use": "@cloudbase/framework-plugin-database",
+        "inputs": {
+          "collections": [
+            {
+              "collectionName": "meeting-simple",
+              "aclTag": "READONLY"
+            },
+            {
+              "collectionName": "meeting-simple-pass"
+            }
+          ]
+        }
+      },
+      "server": {
+        "use": "@cloudbase/framework-plugin-function",
+        "inputs": {
+          "functionRootPath": "cloudfunctions",
+          "functions": [
+            {
+              "name": "autoclear-meeting-meeting-simple",
+              "triggers": [
+                {
+                  "name": "clear-time-trigger",
+                  "type": "timer",
+                  "config": "0 0 2 * * * *"
+                }
+              ]
+            },
+            { "name": "join-meeting-meeting-simple" },
+            { "name": "create-meeting-meeting-simple" },
+            { "name": "update-ticket-meeting-simple" }
+          ]
+        }
+      }
+    }
+  }
+}
